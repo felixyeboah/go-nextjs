@@ -148,4 +148,59 @@ The application is designed with security and privacy in mind, following best pr
 - [OWASP Go Security Cheatsheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Go_Security_Cheatsheet.md)
 - [Go Security Best Practices](https://blog.sqreen.com/go-security-best-practices/)
 - [Docker Security Best Practices](https://docs.docker.com/develop/security-best-practices/)
-- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework) 
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
+
+## Environment Variables and Sensitive Data
+
+- **Never commit sensitive data**: API keys, tokens, passwords, or other credentials should never be committed to the repository.
+- **Use .env files**: Store sensitive data in .env files which are ignored by git.
+- **Use .env.example files**: Provide example .env files with placeholders instead of real credentials.
+- **Check for leaks**: Regularly audit the codebase for accidentally committed sensitive data.
+
+If you discover that you've accidentally committed sensitive data:
+1. Immediately change any exposed credentials
+2. Remove the sensitive data from git history using git-filter-repo
+3. Force push the changes to the repository
+
+## Reporting a Vulnerability
+
+If you discover a security vulnerability within this project, please send an email to [security@example.com](mailto:security@example.com). All security vulnerabilities will be promptly addressed.
+
+## Security Checks
+
+This project uses the following tools for security checks:
+
+- **gosec**: Static analysis for Go code to find potential security issues
+- **nancy**: Checks for vulnerabilities in dependencies
+
+To run security checks locally:
+
+```bash
+cd backend
+make security-check
+```
+
+## Secure Coding Practices
+
+This project follows these secure coding practices:
+
+1. **Input Validation**: All user inputs are validated before processing
+2. **Proper Error Handling**: Errors are handled appropriately without leaking sensitive information
+3. **Secure Password Storage**: Passwords are hashed using bcrypt
+4. **Rate Limiting**: API endpoints are protected against brute force attacks
+5. **HTTPS Only**: All communications use HTTPS
+6. **Content Security Policy**: Implemented to prevent XSS attacks
+7. **Regular Dependency Updates**: Dependencies are regularly updated to patch security vulnerabilities
+
+## Security Features
+
+The application includes the following security features:
+
+- PASETO tokens for secure authentication
+- Email verification for new accounts
+- Two-factor authentication (optional)
+- Account lockout after multiple failed login attempts
+- Secure password reset flow
+- Login notification emails
+- Session management and revocation
+- Audit logging for security events 
