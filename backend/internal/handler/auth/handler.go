@@ -194,24 +194,21 @@ func (h *Handler) Logout(c echo.Context) error {
 }
 
 // VerifyEmail godoc
-// @Summary Verify user email
+// @Summary Verify email
 // @Description Verify a user's email address using a token
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param request body VerifyEmailRequest true "Email verification token"
-// @Success 200 {object} VerifyEmailResponse "Email verified successfully"
-// @Failure 400 {object} ErrorResponse "Invalid input"
-// @Failure 401 {object} ErrorResponse "Invalid token"
-// @Failure 500 {object} ErrorResponse "Server error"
+// @Success 200 {object} VerifyEmailResponse
+// @Failure 400 {object} ErrorResponse "Invalid token"
 // @Router /api/v1/auth/verify-email [post]
 func (h *Handler) VerifyEmail(c echo.Context) error {
 	var req VerifyEmailRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, response.NewErrorResponse("Invalid request format"))
+		return c.JSON(http.StatusBadRequest, response.NewErrorResponse("Invalid request"))
 	}
 
-	// Validate request
 	if err := c.Validate(req); err != nil {
 		return c.JSON(http.StatusBadRequest, response.NewErrorResponse(err.Error()))
 	}
@@ -221,18 +218,13 @@ func (h *Handler) VerifyEmail(c echo.Context) error {
 		Token: req.Token,
 	}
 
-	// Call service
-	err := h.authService.VerifyEmail(c.Request().Context(), verifyReq)
-	if err != nil {
+	if err := h.authService.VerifyEmail(c.Request().Context(), verifyReq); err != nil {
 		return c.JSON(http.StatusBadRequest, response.NewErrorResponse("Invalid verification token"))
 	}
 
-	// Create response
-	resp := VerifyEmailResponse{
+	return c.JSON(http.StatusOK, VerifyEmailResponse{
 		Message: "Email verified successfully",
-	}
-
-	return c.JSON(http.StatusOK, resp)
+	})
 }
 
 // ForgotPassword godoc

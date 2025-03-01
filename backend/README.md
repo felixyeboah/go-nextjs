@@ -93,7 +93,7 @@ For development with hot reloading, use Docker Compose from the root directory:
 docker-compose up -d backend
 ```
 
-This will start the backend service along with PostgreSQL and Redis, which are required for full functionality.
+This will start the backend service along with Redis, which is required for caching functionality. Note that this application uses Turso database (remote SQLite) instead of a local database container.
 
 ## Generating Swagger Documentation
 
@@ -270,11 +270,19 @@ docker-compose up -d
 This will start:
 - Backend service
 - Frontend service
-- PostgreSQL database
 - Redis cache
-- PgAdmin for database management
+
+Note: This application uses Turso database (remote SQLite) instead of a local database container.
 
 Access the services:
 - Backend API: http://localhost:8080
 - Swagger UI: http://localhost:8080/swagger/
-- PgAdmin: http://localhost:5050 (admin@example.com / admin) 
+
+## Tools and Technologies
+
+- Go 1.22+
+- Fiber web framework
+- Turso database (distributed SQLite)
+- Redis for caching
+- Docker for containerization
+- Air for hot reloading 

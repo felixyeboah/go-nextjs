@@ -123,18 +123,16 @@ func (s *ResendService) SendPasswordChangedEmail(ctx context.Context, to string)
 	return nil
 }
 
+// ValidateEmailAddress checks if the email address is valid
 func (s *ResendService) ValidateEmailAddress(email string) bool {
+	return isValidEmail(email)
+}
+
+// isValidEmail checks if the email string is valid
+func isValidEmail(email string) bool {
 	email = strings.TrimSpace(strings.ToLower(email))
-	if email == "" {
-		return false
-	}
-
 	parts := strings.Split(email, "@")
-	if len(parts) != 2 {
-		return false
-	}
-
-	return true
+	return len(parts) == 2 && parts[0] != "" && parts[1] != ""
 }
 
 // Email templates

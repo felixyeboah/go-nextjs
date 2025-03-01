@@ -12,8 +12,8 @@ services:
       - ./backend:/app
     env_file:
       - ./backend/.env
+    # Note: This service uses Turso database (remote), not PostgreSQL
     depends_on:
-      - postgres
       - redis
     networks:
       - fullstack-network
@@ -35,20 +35,6 @@ services:
     networks:
       - fullstack-network
 
-  postgres:
-    container_name: fullstack-postgres
-    image: postgres:16-alpine
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-fullstack}
-    networks:
-      - fullstack-network
-
   redis:
     container_name: fullstack-redis
     image: redis:alpine
@@ -59,26 +45,11 @@ services:
     networks:
       - fullstack-network
 
-  pgadmin:
-    container_name: fullstack-pgadmin
-    image: dpage/pgadmin4
-    ports:
-      - "5050:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - postgres
-    networks:
-      - fullstack-network
+# Note: PostgreSQL and PgAdmin services have been removed as the application uses Turso database
 
 networks:
   fullstack-network:
     driver: bridge
 
 volumes:
-  postgres_data:
-  redis_data:
-  pgadmin_data: 
+  redis_data: 

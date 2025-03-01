@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nanayaw/fullstack/internal/errors"
 	"github.com/nanayaw/fullstack/internal/service"
@@ -16,6 +17,14 @@ type Middleware struct {
 	authService  service.AuthService
 	cacheService service.CacheService
 }
+
+// Define a custom type for context keys to avoid collisions
+type contextKey string
+
+// Define constants for context keys
+const (
+	requestIDKey contextKey = "request_id"
+)
 
 func NewMiddleware(authService service.AuthService, cacheService service.CacheService) *Middleware {
 	return &Middleware{
@@ -148,22 +157,22 @@ func Recover(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-// RequestID adds a unique request ID to the context
-func RequestID(next echo.HandlerFunc) echo.HandlerFunc {
+// RequestID middleware adds a unique request ID to each request
+func (m *Middleware) RequestID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
 		res := c.Response()
-		rid := req.Header.Get("X-Request-ID")
 
+		rid := req.Header.Get(echo.HeaderXRequestID)
 		if rid == "" {
-			rid = fmt.Sprintf("%d", time.Now().UnixNano())
+			rid = uuid.New().String()
+			req.Header.Set(echo.HeaderXRequestID, rid)
 		}
+		res.Header().Set(echo.HeaderXRequestID, rid)
 
-		ctx := context.WithValue(req.Context(), "request_id", rid)
-		req = req.WithContext(ctx)
-		c.SetRequest(req)
-
-		res.Header().Set("X-Request-ID", rid)
+		// Use the custom type for context key
+		ctx := context.WithValue(req.Context(), requestIDKey, rid)
+		c.SetRequest(req.WithContext(ctx))
 
 		return next(c)
 	}

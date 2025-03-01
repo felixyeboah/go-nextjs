@@ -8,14 +8,15 @@ The Docker Compose configuration includes the following services:
 
 - **Backend**: Go API server
 - **Frontend**: Next.js web application
-- **PostgreSQL**: Database server
-- **Redis**: In-memory data store
-- **PgAdmin**: PostgreSQL administration tool
+- **Redis**: In-memory data store for caching and session management
+
+**Note on Database**: This application uses Turso (a remote SQLite database service) rather than a containerized database. The Turso connection details must be configured in the backend's `.env` file.
 
 ## Prerequisites
 
 - Docker and Docker Compose installed
 - Git (to clone the repository)
+- A Turso database account and credentials
 
 ## Getting Started
 
@@ -27,16 +28,10 @@ The Docker Compose configuration includes the following services:
 
 2. Create environment files:
    - Create `.env` files for both backend and frontend based on their respective `.env.example` files
-   - Create a `.env` file in the root directory for Docker Compose environment variables:
+   - Ensure your backend `.env` file includes the Turso database URL and authentication token:
    ```
-   # PostgreSQL
-   POSTGRES_USER=your_postgres_user
-   POSTGRES_PASSWORD=your_secure_password
-   POSTGRES_DB=your_database_name
-   
-   # PgAdmin
-   PGADMIN_DEFAULT_EMAIL=your_email@example.com
-   PGADMIN_DEFAULT_PASSWORD=your_secure_pgadmin_password
+   DATABASE_URL=libsql://your-database-name.turso.io
+   DATABASE_AUTH_TOKEN=your-turso-auth-token
    ```
 
 3. Start the services:
@@ -51,7 +46,8 @@ The Docker Compose configuration includes the following services:
 - **Image**: Built from `./backend/Dockerfile`
 - **Port**: 8080
 - **Environment**: Variables loaded from `./backend/.env`
-- **Dependencies**: PostgreSQL, Redis
+- **Database**: Uses Turso (remote SQLite database)
+- **Dependencies**: Redis
 
 ### Frontend
 
@@ -60,36 +56,17 @@ The Docker Compose configuration includes the following services:
 - **Environment**: Variables loaded from `./frontend/.env`
 - **Dependencies**: Backend
 
-### PostgreSQL
-
-- **Image**: postgres:16-alpine
-- **Port**: 5432
-- **Environment Variables**:
-  - `POSTGRES_USER`: Database username (from environment or default "postgres")
-  - `POSTGRES_PASSWORD`: Database password (from environment or default "postgres")
-  - `POSTGRES_DB`: Database name (from environment or default "fullstack")
-- **Volumes**: Persistent data stored in `postgres_data` volume
-
 ### Redis
 
 - **Image**: redis:alpine
 - **Port**: 6379
 - **Volumes**: Persistent data stored in `redis_data` volume
-
-### PgAdmin
-
-- **Image**: dpage/pgadmin4
-- **Port**: 5050
-- **Environment Variables**:
-  - `PGADMIN_DEFAULT_EMAIL`: Admin email (from environment or default "admin@admin.com")
-  - `PGADMIN_DEFAULT_PASSWORD`: Admin password (from environment or default "admin")
-- **Dependencies**: PostgreSQL
+- **Usage**: Used for caching, session management, and rate limiting
 
 ## Accessing Services
 
 - Backend API: http://localhost:8080
 - Frontend: http://localhost:3000
-- PgAdmin: http://localhost:5050
 
 ## Stopping Services
 
@@ -98,7 +75,7 @@ To stop all services:
 docker-compose down
 ```
 
-To stop and remove volumes (will delete all data):
+To stop and remove volumes (will delete Redis data):
 ```bash
 docker-compose down -v
 ```
@@ -107,11 +84,12 @@ docker-compose down -v
 
 ### Database Connection Issues
 
-If the backend cannot connect to the database:
+If the backend cannot connect to the Turso database:
 
-1. Ensure PostgreSQL service is running:
-   ```bash
-   docker-compose ps postgres
+1. Verify your Turso credentials in the backend's `.env` file:
+   ```
+   DATABASE_URL=libsql://your-database-name.turso.io
+   DATABASE_AUTH_TOKEN=your-turso-auth-token
    ```
 
 2. Check backend logs for connection errors:
@@ -119,7 +97,7 @@ If the backend cannot connect to the database:
    docker-compose logs backend
    ```
 
-3. Verify that the database connection string in the backend's `.env` file matches the PostgreSQL service configuration.
+3. Ensure your IP address is allowed in Turso's connection settings.
 
 ### Frontend Cannot Connect to Backend
 
@@ -138,6 +116,52 @@ If the backend cannot connect to the database:
 ## Security Notes
 
 - Never commit `.env` files to version control
-- Always use strong, unique passwords for database and admin accounts
+- Always use strong, unique passwords and API tokens
+- Regularly rotate your Turso authentication tokens
 - Consider using Docker secrets for production deployments
-- Regularly update Docker images to get security patches 
+- Regularly update Docker images to get security patches
+
+# Docker Compose Setup Issues and Fixes
+
+## Current Issues
+
+1. **Backend Container**:
+   - The database driver for libsql (Turso) is not found: `error: failed to open database: database driver: unknown driver libsql (forgotten import?)`
+   - The main executable is not found: `/app/scripts/docker_init.sh: exec: line 79: /app/main: not found`
+
+2. **Frontend Container**:
+   - The Next.js application hasn't been built yet: `[Error: Could not find a production build in the '.next' directory. Try building your app with 'next build' before starting the production server.]`
+
+## Required Fixes
+
+### Backend Container
+
+1. **Fix the libsql driver import**:
+   - Ensure the libsql driver is properly imported in the main.go file or wherever the database connection is established.
+   - Add `_ "github.com/tursodatabase/libsql-client-go/libsql"` to the imports.
+
+2. **Fix the missing executable**:
+   - Update the Dockerfile to properly build the Go application.
+   - Ensure the build output is placed in the correct location (/app/main).
+
+### Frontend Container
+
+1. **Build the Next.js application**:
+   - Update the Dockerfile to build the Next.js application before starting it.
+   - Change the command from `next start` to `next build && next start`.
+
+## Docker Compose Configuration
+
+The docker-compose.yml file has been updated to:
+- Remove PostgreSQL and PgAdmin services as the application now uses Turso database.
+- Keep only the necessary services: backend, frontend, and Redis.
+
+## Next Steps
+
+1. Fix the backend Dockerfile to properly build the Go application and import the libsql driver.
+2. Fix the frontend Dockerfile to build the Next.js application before starting it.
+3. Test the Docker Compose setup again after making these changes.
+
+## Alternative Approach
+
+Until the Docker setup is fixed, users can run the application locally using the Development Setup instructions in the README. 

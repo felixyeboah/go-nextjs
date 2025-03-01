@@ -22,6 +22,7 @@ A modern, production-ready fullstack application built with Go (backend) and Nex
 - [Security](#security)
 - [Testing](#testing)
 - [Additional Documentation](#additional-documentation)
+- [Recent Changes](#recent-changes)
 
 ## Overview
 
@@ -35,7 +36,7 @@ This project is a fullstack application template that combines a Go backend with
   - OAuth integration (Google, GitHub)
   - Email service integration (Resend, Upstash Workflow)
   - Redis caching
-  - SQLite database (configurable for other databases)
+  - Turso database (distributed SQLite)
   - Swagger API documentation
   - Structured logging
   - Graceful shutdown
@@ -147,6 +148,8 @@ frontend/
 
 ### Docker Setup
 
+> **Note:** The Docker setup is currently being updated to work with Turso database. For now, please use the Development Setup instructions above.
+
 The easiest way to run the entire application is using Docker Compose:
 
 1. Clone the repository:
@@ -164,7 +167,6 @@ The easiest way to run the entire application is using Docker Compose:
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080
    - Swagger UI: http://localhost:8080/swagger/
-   - PgAdmin: http://localhost:5050 (admin@example.com / admin)
 
 4. Stop the application:
    ```bash
@@ -174,9 +176,9 @@ The easiest way to run the entire application is using Docker Compose:
 The Docker Compose setup includes the following services:
 - **Backend**: Go API server with hot-reloading for development
 - **Frontend**: Next.js application with hot-reloading
-- **PostgreSQL**: Database server (version 15)
 - **Redis**: In-memory cache and message broker
-- **PgAdmin**: Web-based PostgreSQL administration tool
+
+Note: This application uses Turso database (remote SQLite) instead of a local database container.
 
 Each service is configured with appropriate volumes for data persistence and connected through a dedicated network.
 
@@ -254,7 +256,19 @@ The application will automatically choose the appropriate email provider based o
 
 ## Database
 
-The application uses SQLite by default, but can be configured to use any database supported by the Go SQL package. Database migrations are managed using the `migrate` tool.
+The application uses Turso, a distributed SQLite database, for data storage. Turso provides:
+
+- Global distribution with low latency
+- SQLite compatibility
+- Serverless operation
+- Built-in replication and high availability
+
+The backend connects to Turso using the libsql-client-go driver. Database migrations are managed using the `migrate` tool.
+
+For local development, you'll need to:
+1. Install the Turso CLI: https://docs.turso.tech/reference/turso-cli
+2. Create a database and get your connection URL and auth token
+3. Configure these in your `.env` file
 
 ## Deployment
 
@@ -344,4 +358,25 @@ For more detailed information, please refer to the following documentation:
 - [Backend Documentation](backend/README.md) - Detailed information about the backend service
 - [Frontend Documentation](frontend/README.md) - Detailed information about the frontend application
 - [Docker Compose Setup](docker-compose.md) - Detailed information about the Docker Compose configuration
-- [Security Documentation](SECURITY.md) - Detailed information about security features and best practices 
+- [Security Documentation](SECURITY.md) - Detailed information about security features and best practices
+
+## Recent Changes
+
+### March 1, 2024
+
+1. **Database Migration**:
+   - Migrated from PostgreSQL to Turso database (distributed SQLite)
+   - Updated database connection code to use libsql-client-go
+   - Removed PostgreSQL and PgAdmin services from Docker Compose
+
+2. **Docker Setup**:
+   - Updated Docker Compose configuration to reflect the use of Turso database
+   - Created documentation for Docker setup issues and fixes (see docker-compose.md)
+   - Added note to Docker Setup section about ongoing updates
+
+3. **Documentation**:
+   - Updated README to reflect the use of Turso database
+   - Added instructions for setting up Turso for local development
+   - Updated Features section to mention Turso instead of SQLite
+
+For more details on the Docker setup issues and fixes, see the [docker-compose.md](docker-compose.md) file. 

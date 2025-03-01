@@ -321,7 +321,7 @@ func DefaultConfig() *Config {
 			WriteTimeout: 15 * time.Second,
 		},
 		Database: DatabaseConfig{
-			URL:          "postgres://user:password@localhost:5432/database",
+			URL:          "libsql://your-database.turso.io",
 			AuthToken:    "turso_auth_token",
 			MaxOpenConns: 25,
 			MaxIdleConns: 25,

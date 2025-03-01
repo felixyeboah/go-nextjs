@@ -153,11 +153,7 @@ func (s *UpstashWorkflowService) ValidateEmailAddress(email string) bool {
 	}
 
 	parts := strings.Split(email, "@")
-	if len(parts) != 2 {
-		return false
-	}
-
-	return true
+	return len(parts) == 2
 }
 
 // ParseTemplate parses a template with data
