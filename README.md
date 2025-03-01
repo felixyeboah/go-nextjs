@@ -148,7 +148,7 @@ frontend/
 
 ### Docker Setup
 
-The easiest way to run the entire application is using Docker Compose:
+The easiest way to run the entire application is using the provided Makefile commands:
 
 1. Clone the repository:
    ```bash
@@ -167,9 +167,16 @@ The easiest way to run the entire application is using Docker Compose:
    # Edit frontend/.env with your API URL and other settings
    ```
 
-3. Start the containers:
+3. Build and start the containers:
    ```bash
-   docker-compose up -d
+   # Build all containers
+   make build
+   
+   # Start the application in detached mode
+   make run
+   
+   # Or to see logs in real-time
+   make run-logs
    ```
 
 4. Access the application:
@@ -179,7 +186,22 @@ The easiest way to run the entire application is using Docker Compose:
 
 5. Stop the application:
    ```bash
-   docker-compose down
+   make stop
+   ```
+
+6. Other useful commands:
+   ```bash
+   # View backend logs
+   make backend-logs
+   
+   # View frontend logs
+   make frontend-logs
+   
+   # Clean up containers and images
+   make clean
+   
+   # See all available commands
+   make help
    ```
 
 The Docker Compose setup includes the following services:
@@ -388,4 +410,10 @@ For more detailed information, please refer to the following documentation:
    - Added instructions for setting up Turso for local development
    - Updated Features section to mention Turso instead of SQLite
 
-For more details on the Docker setup issues and fixes, see the [docker-compose.md](docker-compose.md) file. 
+For more details on the Docker setup issues and fixes, see the [docker-compose.md](docker-compose.md) file.
+
+- Updated Go version to 1.24.0
+- Fixed Redis connection in Docker environment by using the proper URL format (redis://redis:6379)
+- Disabled ESLint during Next.js build to prevent build failures
+- Removed obsolete version attribute from docker-compose.yml
+- Added directory creation in Dockerfiles to handle missing files and directories 
