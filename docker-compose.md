@@ -194,4 +194,92 @@ After implementing these fixes, the Docker setup was tested by:
 4. Testing the frontend by accessing http://localhost:3001
 5. Testing the backend API by accessing http://localhost:8080/api/v1/health
 
-All tests were successful, confirming that the issues have been resolved. 
+All tests were successful, confirming that the issues have been resolved.
+
+## Successful Setup Verification
+
+After implementing all the fixes mentioned above, the application has been successfully set up and verified:
+
+1. **Container Status**: All containers (backend, frontend, and redis) are running properly:
+   ```bash
+   docker ps
+   ```
+   Shows all three containers with "Up" status.
+
+2. **Backend API Verification**: The backend API health endpoint returns a successful response:
+   ```bash
+   curl -s http://localhost:8080/api/v1/health | jq
+   {
+     "status": "ok",
+     "version": "1.0.0"
+   }
+   ```
+
+3. **Frontend Verification**: The frontend is accessible and returns a 200 OK status:
+   ```bash
+   curl -s -I http://localhost:3001
+   HTTP/1.1 200 OK
+   ```
+
+4. **Swagger Documentation**: The API documentation is available at:
+   ```
+   http://localhost:8080/swagger/index.html
+   ```
+
+5. **Available API Endpoints**:
+   ```
+   /api/v1/auth/forgot-password
+   /api/v1/auth/login
+   /api/v1/auth/logout
+   /api/v1/auth/refresh
+   /api/v1/auth/register
+   /api/v1/auth/reset-password
+   /api/v1/auth/verify-email
+   /api/v1/users/account
+   /api/v1/users/change-password
+   /api/v1/users/profile
+   ```
+
+6. **Application Access**:
+   - Backend API: http://localhost:8080
+   - Frontend: http://localhost:3001
+   - Swagger Documentation: http://localhost:8080/swagger/index.html
+
+## Useful Commands
+
+Here are some useful commands for managing the application:
+
+1. **Start the application in detached mode**:
+   ```bash
+   make run
+   ```
+
+2. **Start the application with logs**:
+   ```bash
+   make run-logs
+   ```
+
+3. **View backend logs**:
+   ```bash
+   make backend-logs
+   ```
+
+4. **View frontend logs**:
+   ```bash
+   make frontend-logs
+   ```
+
+5. **Stop the application**:
+   ```bash
+   make stop
+   ```
+
+6. **Rebuild containers**:
+   ```bash
+   make build
+   ```
+
+7. **Clean up containers and images**:
+   ```bash
+   make clean
+   ``` 
