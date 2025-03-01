@@ -11,7 +11,7 @@ services:
     volumes:
       - ./backend:/app
     env_file:
-      - ./backend/.env.docker
+      - ./backend/.env
     depends_on:
       - postgres
       - redis
@@ -37,21 +37,21 @@ services:
 
   postgres:
     container_name: fullstack-postgres
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: fullstack
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-fullstack}
     networks:
       - fullstack-network
 
   redis:
     container_name: fullstack-redis
-    image: redis:7-alpine
+    image: redis:alpine
     ports:
       - "6379:6379"
     volumes:
@@ -65,8 +65,8 @@ services:
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
