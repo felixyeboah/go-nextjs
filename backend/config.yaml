@@ -1,0 +1,30 @@
+server:
+  port: "8080"
+  baseURL: "http://localhost:8080"
+  env: "development"
+
+database:
+  url: "${TURSO_DATABASE_URL}"
+  name: "fullstack"
+  authToken: "${TURSO_AUTH_TOKEN}"
+
+auth:
+  tokenSecret: "${JWT_SECRET}"
+  refreshSecret: "${REFRESH_SECRET}"
+  tokenExpiry: 3600
+  refreshExpiry: 604800
+  googleClientID: "${GOOGLE_CLIENT_ID}"
+  googleSecret: "${GOOGLE_CLIENT_SECRET}"
+  githubClientID: "${GITHUB_CLIENT_ID}"
+  githubSecret: "${GITHUB_CLIENT_SECRET}"
+
+email:
+  resendAPIKey: "${RESEND_API_KEY}"
+  fromEmail: "no-reply@yourdomain.com"
+  fromName: "Your App Name"
+
+redis:
+  host: "localhost"
+  port: "6379"
+  password: "${REDIS_PASSWORD}"
+  db: 0 

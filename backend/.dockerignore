@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+build/
+bin/
+tmp/
+
+# Development files
+*.log
+*.swp
+*.swo
+.DS_Store
+
+# Environment files (except example)
+.env
+.env.*
+!.env.example
+
+# Data files
+data/
+*.db
+*.sqlite
+
+# Documentation
+README.md
+docs/
+
+# Editor directories
+.idea/
+.vscode/
+*.sublime-* 
