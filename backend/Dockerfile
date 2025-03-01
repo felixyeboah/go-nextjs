@@ -3,7 +3,7 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /app
 
 # Install dependencies
-RUN apk add --no-cache git
+RUN apk add --no-cache git gcc musl-dev
 
 # Install tools
 RUN go install github.com/swaggo/swag/cmd/swag@latest
@@ -23,7 +23,7 @@ COPY . .
 RUN swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal
 
 # Build the application with Turso driver
-RUN CGO_ENABLED=0 GOOS=linux go build -tags 'libsql' -o api ./cmd/api
+RUN CGO_ENABLED=1 GOOS=linux go build -tags 'libsql' -o api ./cmd/api
 
 # Final stage
 FROM alpine:latest
@@ -41,7 +41,7 @@ RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 # Copy the binary and other necessary files from the builder stage
-COPY --from=builder /app/api .
+COPY --from=builder /app/api /app/api
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/docs ./docs

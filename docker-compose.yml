@@ -9,14 +9,16 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./backend:/app
+      - ./backend/keys:/app/keys
+      - ./backend/data:/app/data
     env_file:
-      - ./backend/.env
+      - ./backend/.env.docker
     # Note: This service uses Turso database (remote), not PostgreSQL
     depends_on:
       - redis
     networks:
       - fullstack-network
+    restart: unless-stopped
 
   frontend:
     container_name: fullstack-frontend
@@ -26,14 +28,14 @@ services:
     ports:
       - "3001:3000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend/public:/app/public
     env_file:
       - ./frontend/.env
     depends_on:
       - backend
     networks:
       - fullstack-network
+    restart: unless-stopped
 
   redis:
     container_name: fullstack-redis
@@ -44,6 +46,7 @@ services:
       - redis_data:/data
     networks:
       - fullstack-network
+    restart: unless-stopped
 
 # Note: PostgreSQL and PgAdmin services have been removed as the application uses Turso database
 

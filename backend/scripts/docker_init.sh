@@ -61,9 +61,21 @@ echo "DATABASE_AUTH_TOKEN: [REDACTED]"
 echo "PASETO_PUBLIC_KEY_PATH: $PASETO_PUBLIC_KEY_PATH"
 echo "PASETO_PRIVATE_KEY_PATH: $PASETO_PRIVATE_KEY_PATH"
 
+# Set DATABASE_TYPE if not already set
+if [ -z "$DATABASE_TYPE" ]; then
+    if [[ "$DATABASE_URL" == *"libsql://"* ]]; then
+        export DATABASE_TYPE="turso"
+    elif [[ "$DATABASE_URL" == *"sqlite"* ]]; then
+        export DATABASE_TYPE="sqlite"
+    fi
+    echo "Set DATABASE_TYPE to: $DATABASE_TYPE"
+fi
+
 # Skip migrations for certain database types
 if [ "$DATABASE_TYPE" = "sqlite" ] || [ "$DATABASE_TYPE" = "sqlite3" ] || [ "$DATABASE_TYPE" = "memory" ]; then
     echo "Skipping migrations for database type: $DATABASE_TYPE"
+elif [ "$DATABASE_TYPE" = "turso" ]; then
+    echo "Skipping migrations for Turso database (handled by Turso service)"
 else
     # Run migrations
     echo "Running database migrations..."
@@ -72,6 +84,13 @@ else
     else
         echo "Warning: migrate command not found, skipping migrations"
     fi
+fi
+
+# Check if the API binary exists
+if [ ! -f /app/api ]; then
+    echo "ERROR: API binary not found at /app/api"
+    ls -la /app
+    exit 1
 fi
 
 # Start the application

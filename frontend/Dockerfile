@@ -2,17 +2,17 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package.json
-COPY package.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Install dependencies using npm install instead of npm ci
-RUN npm install
+# Install dependencies
+RUN npm ci
 
 # Copy the rest of the code
 COPY . .
 
-# Build the application with ESLint checks disabled
-RUN NEXT_TELEMETRY_DISABLED=1 npm run build -- --no-lint
+# Build the application
+RUN NEXT_TELEMETRY_DISABLED=1 npm run build
 
 # Production image
 FROM node:20-alpine
@@ -21,6 +21,7 @@ WORKDIR /app
 
 # Copy from builder stage
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
