@@ -148,8 +148,6 @@ frontend/
 
 ### Docker Setup
 
-> **Note:** The Docker setup is currently being updated to work with Turso database. For now, please use the Development Setup instructions above.
-
 The easiest way to run the entire application is using Docker Compose:
 
 1. Clone the repository:
@@ -158,27 +156,38 @@ The easiest way to run the entire application is using Docker Compose:
    cd fullstack
    ```
 
-2. Start the containers:
+2. Configure environment variables:
+   ```bash
+   # For backend
+   cp backend/.env.docker.example backend/.env.docker
+   # Edit backend/.env.docker with your Turso database credentials and other settings
+   
+   # For frontend
+   cp frontend/.env.example frontend/.env
+   # Edit frontend/.env with your API URL and other settings
+   ```
+
+3. Start the containers:
    ```bash
    docker-compose up -d
    ```
 
-3. Access the application:
-   - Frontend: http://localhost:3000
+4. Access the application:
+   - Frontend: http://localhost:3001
    - Backend API: http://localhost:8080
    - Swagger UI: http://localhost:8080/swagger/
 
-4. Stop the application:
+5. Stop the application:
    ```bash
    docker-compose down
    ```
 
 The Docker Compose setup includes the following services:
-- **Backend**: Go API server with hot-reloading for development
-- **Frontend**: Next.js application with hot-reloading
+- **Backend**: Go API server with Turso database integration
+- **Frontend**: Next.js application
 - **Redis**: In-memory cache and message broker
 
-Note: This application uses Turso database (remote SQLite) instead of a local database container.
+Note: This application uses Turso database (distributed SQLite) instead of a local database container.
 
 Each service is configured with appropriate volumes for data persistence and connected through a dedicated network.
 

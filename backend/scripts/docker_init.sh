@@ -76,4 +76,4 @@ fi
 
 # Start the application
 echo "Starting application..."
-exec /app/main 
+exec /app/api 

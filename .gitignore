@@ -2,7 +2,24 @@
 .env
 .env.*
 !.env.example
+!.env.docker.example
+
+# Ignore generated keys
+backend/keys/
+backend/.env.keys
 
 # Ignore local development files
 .DS_Store
-node_modules/ 
+node_modules/
+tmp/
+dist/
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore build artifacts
+backend/api
+backend/bin/
+frontend/.next/
+frontend/out/ 

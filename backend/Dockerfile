@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
@@ -45,7 +45,7 @@ COPY --from=builder /app/api .
 COPY --from=builder /app/migrations ./migrations
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/docs ./docs
-COPY --from=builder /app/.env.example ./.env
+COPY --from=builder /app/.env.docker ./.env
 COPY --from=builder /app/sqlc.yaml .
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
 
