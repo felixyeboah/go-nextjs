@@ -10,7 +10,6 @@ import (
 	"github.com/nanayaw/fullstack/internal/config"
 	"github.com/nanayaw/fullstack/internal/model"
 	"github.com/nanayaw/fullstack/internal/service"
-	"github.com/nanayaw/fullstack/pkg/email/templates"
 	"github.com/nanayaw/fullstack/pkg/logger"
 )
 
@@ -380,16 +379,6 @@ func (s *Service) sendSuspiciousActivityEmail(ctx context.Context, email string,
 		"location", event.Location,
 		"ipAddress", event.IPAddress)
 	return nil
-}
-
-// getTemplateData returns the common template data
-func (s *Service) getTemplateData() templates.TemplateData {
-	return templates.TemplateData{
-		AppName:      s.config.App.Name,
-		SupportEmail: "support@example.com", // Use a default or get from config
-		BaseURL:      s.config.App.URL,
-		Year:         time.Now().Year(),
-	}
 }
 
 // getDeviceInfo extracts device information from user agent

@@ -15,7 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	// Import the docs package to register Swagger docs
-	// _ "github.com/nanayaw/fullstack/docs"
+	_ "github.com/nanayaw/fullstack/docs"
 
 	"github.com/nanayaw/fullstack/internal/config"
 	authHandler "github.com/nanayaw/fullstack/internal/handler/auth"

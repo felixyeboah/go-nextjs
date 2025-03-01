@@ -410,10 +410,13 @@ For more detailed information, please refer to the following documentation:
    - Added instructions for setting up Turso for local development
    - Updated Features section to mention Turso instead of SQLite
 
-For more details on the Docker setup issues and fixes, see the [docker-compose.md](docker-compose.md) file.
+4. **Bug Fixes and Improvements**:
+   - Fixed Swagger documentation by enabling the docs import in main.go
+   - Updated Go version to 1.24.0
+   - Fixed Redis connection in Docker environment by using the proper URL format (redis://redis:6379)
+   - Disabled ESLint during Next.js build to prevent build failures
+   - Removed obsolete version attribute from docker-compose.yml
+   - Added directory creation in Dockerfiles to handle missing files and directories
+   - Fixed linting issues in the codebase
 
-- Updated Go version to 1.24.0
-- Fixed Redis connection in Docker environment by using the proper URL format (redis://redis:6379)
-- Disabled ESLint during Next.js build to prevent build failures
-- Removed obsolete version attribute from docker-compose.yml
-- Added directory creation in Dockerfiles to handle missing files and directories 
+For more details on the Docker setup issues and fixes, see the [docker-compose.md](docker-compose.md) file. 

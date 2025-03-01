@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -254,6 +255,7 @@ func (h *Handler) ForgotPassword(c echo.Context) error {
 	if err != nil {
 		// Don't expose whether the email exists or not for security reasons
 		// Just return success even if the email doesn't exist
+		log.Printf("Error sending password reset email: %v", err)
 	}
 
 	// Create response
@@ -317,5 +319,3 @@ func (h *Handler) RegisterRoutes(g *echo.Group) {
 	g.POST("/forgot-password", h.ForgotPassword)
 	g.POST("/reset-password", h.ResetPassword)
 }
-
-// Request and response models for Swagger documentation are defined in models.go

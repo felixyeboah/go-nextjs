@@ -1,6 +1,7 @@
 package user
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -297,6 +298,7 @@ func (h *Handler) DeleteAccount(c echo.Context) error {
 	if err != nil {
 		// Log error but continue
 		// The user account is already deleted, so we should still return success
+		log.Printf("Error invalidating sessions for deleted user %s: %v", userID, err)
 	}
 
 	// Create response
